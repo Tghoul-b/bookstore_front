@@ -122,7 +122,10 @@ import LoginForm from '../login-form/login-form.vue';
 	     'login-form':LoginForm
 	    },
 		methods:{
-            handleSubmit({username, password},callback){
+            handleSubmit({username, password,valid},callback){
+              if(!valid)
+                this.$refs.loginform.loading=false    
+              if(valid){
                 this.$api.api_all.post_user_login_api(
                     username,password
                 ).then((response)=>{
@@ -134,14 +137,17 @@ import LoginForm from '../login-form/login-form.vue';
                     else if(this.flag==1){
                         let timestamp = Math.round(new Date().getTime());
                         this.$api.api_all.add_token(username,timestamp)
-                        this.$router.push('/')
+                        if(username!='admin')
+                           this.$router.push('/')
+                        else
+                           this.$router.push('/admin')
                     }
                     else if(this.flag==0){
                       this.$refs.loginform.loading=false
                     }
                 }).catch((error)=>{
                 })
-            },
+            }},
                 register(name){
                   this.$refs[name].validate((valid)=>{
                     if(!valid)
@@ -157,6 +163,7 @@ import LoginForm from '../login-form/login-form.vue';
                               this.$refs['formItem'].resetFields()
                                this.formItem.update=false;
                               this.$nextTick(() => {
+                                this.formItem.address=[]
                                 this.formItem.update = true
                               })
                          }).catch((error)=>{
@@ -168,6 +175,7 @@ import LoginForm from '../login-form/login-form.vue';
                   this.$refs[name].resetFields()
                   this.formItem.update=false;
                     this.$nextTick(() => {
+                      this.formItem.address=[]
                        this.formItem.update = true
                     })
                 }

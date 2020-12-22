@@ -1,0 +1,132 @@
+<template>
+<div class="container">
+    <div id="SoldInfo"  style="width:600px;height:400px;float:left"></div>
+    <div id="userInfo"  style="margin-left:200px;width:400px;height:400px;float:left"></div>
+</div>
+</template>
+<script>
+import echarts from "echarts";
+export default {
+    name:"statistics",
+    mounted(){
+        this.$api.api_all.getAllClassNum(
+              ).then((response)=>{
+                  this.dataclass=response.data.recordInfo
+                  this.male=response.data.fmale[0]
+                  this.female=response.data.fmale[1]
+                  this.malerate=((this.male)/(this.male+this.female)).toFixed(2)*100
+                  this.femalerate=100-this.malerate
+                  this.drawSoldInfo()
+                  this.drawUserInfo()
+        })
+        
+    },
+    data(){
+        return {
+            dataclass:[],
+            male:null,
+            malerate:null,
+            female:null,
+            femalerate:null
+        }
+    },
+    methods:{
+    drawSoldInfo(){
+    var myChart = echarts.init(document.getElementById('SoldInfo'));
+       var option = {
+            title: {
+                text: '不同类别书\n销量排行榜'
+            },
+            tooltip: {},
+            legend: {
+                data:['销量']
+            },
+            xAxis: {
+                data: ["玄幻","武侠","都市","历史","科幻","网游","同人"]
+            },
+            yAxis: {},
+            series: [{
+                name: '销量',
+                type: 'bar',
+                color:'green',
+                data: this.dataclass
+            }]
+        };
+        myChart.setOption(option);
+    },
+    drawUserInfo(){
+        
+    var myChart1 = echarts.init(document.getElementById('userInfo'));
+    var option= {
+	    title:{
+            text:'用户男女比例',
+            top:'bottom',
+            left:'center',
+            textStyle:{
+                fontSize: 14,
+                fontWeight: '',
+                color: '#333'
+            },
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b}: {c} ({d}%)",
+        },
+        legend: {
+            show: true,
+            orient: 'vertical',
+            x: 'right',
+            data: [this.malerate+'%-男', this.femalerate+'%-女']
+        },
+        graphic:{
+            type:'text',
+            left:'center',
+            top:'center',
+            style:{
+                text:'用户统计\n'+'(总数为:'+(this.male+this.female)+')', 
+                textAlign:'center',
+                font:'italic bolder 16px cursive',
+                fill:'#000',
+                width:30,
+                height:30
+            }
+        },
+        series: [
+            {
+                name:'用户统计',
+                type: 'pie',
+                radius: ['35%', '65%'],
+                itemStyle: {
+                    normal:{
+                        label:{
+                            show:true,
+                            textStyle:{color:'#3c4858',fontSize:"18"},
+                            formatter:function(val){   //让series 中的文字进行换行
+                                return val.name.split("-").join("\n");}
+                        },
+                        labelLine:{
+                            show:true,
+                            lineStyle:{color:'#3c4858'}
+                        }
+                    },
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)',
+                        textColor:'#000'
+                    }
+                },
+                data: [
+                    {value: this.male, name:this.malerate+'%-男'},
+                    {value: this.female, name: this.femalerate+'%-女'},
+                ],
+                color: ['#51CEC6','#FFB703','#5FA0FA'],
+            },
+        ],
+    };
+    myChart1.setOption(option);
+    
+    }
+    }
+}
+</script>

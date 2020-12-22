@@ -74,12 +74,12 @@ export default {
 			this.loading=true;
 			this.$refs.loginForm.validate((valid) => {
 			    // this.$refs.loginForm.validate : 获取表单校验结果; 校验正确-> valid为True; 校验失败-> valid为False;
-				if (valid) {
 					this.$emit('on-success-valid', {
                         username: this.form.username, // 将this.form.username和this.form.password传给父组件的on-success-valid参数
-						password: this.form.password}
+						password: this.form.password,
+						valid:valid}
 					)
-					}
+
 				}
 			)
 		},

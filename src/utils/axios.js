@@ -2,7 +2,7 @@ import axios from 'axios' // 导入node_modules里的axios
 import qs from 'qs'
 
 axios.defaults.baseURL = "http://106.52.12.54:9999/"; // 后端接口 ip:port
-
+//"http://106.52.12.54:9999/"
 axios.interceptors.request.use((request) => {
     //在发送请求之前做某件事
     var token = JSON.parse(localStorage.getItem('TOKEN'));
@@ -11,7 +11,10 @@ axios.interceptors.request.use((request) => {
         request.headers.common['Authorization'] = token;
     }
     if(request.method  === 'post'){
-        request.data = qs.stringify(request.data);
+        let t=request.headers.patch['Content-Type']
+        if(t=='application/x-www-form-urlencoded'){
+          request.data = qs.stringify(request.data);
+        }
     }
     return request;
 },(error) =>{

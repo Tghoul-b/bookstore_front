@@ -7,6 +7,9 @@ import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
 import api_all from "./api/";
 import baseConfig from "./static/config"
+import echarts from "echarts";
+Vue.prototype.$echarts = echarts;
+
 Vue.prototype.$api = api_all;
 Vue.use(ViewUI);
 Vue.config.productionTip = false;
@@ -14,7 +17,7 @@ Vue.config.productionTip = false;
 router.beforeEach((to, from, next) => {
   let d=Math.round(new Date().getTime())
   let s=JSON.parse(window.localStorage.getItem("time"))
-  api_all.api_all.print_token()
+//   api_all.api_all.print_token()
   if(d-s>baseConfig.time_last){
        api_all.api_all.remove_token()
   }
@@ -22,7 +25,7 @@ router.beforeEach((to, from, next) => {
       if (JSON.parse(window.localStorage.getItem("username"))) {  // 通过vuex state获取当前的token是否存在
           next()
       } else {
-          alert('请先登录')
+          alert('登录已失效')
           next({
               path: '/login' //登录路由
           })
