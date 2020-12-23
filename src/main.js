@@ -21,15 +21,23 @@ router.beforeEach((to, from, next) => {
   if(d-s>baseConfig.time_last){
        api_all.api_all.remove_token()
   }
+  
   if (to.meta.requireAuth) {
-      if (JSON.parse(window.localStorage.getItem("username"))) {  // 通过vuex state获取当前的token是否存在
+    let d=JSON.parse(window.localStorage.getItem("username"))
+      if (d=='admin') {  // 通过vuex state获取当前的token是否存在
           next()
-      } else {
-          alert('登录已失效')
+      } else if(d!=null) {
+          alert('您并无权限访问管理员页面')
           next({
-              path: '/login' //登录路由
+              path: '/' //登录路由
           })
-      }
+          }
+          else{
+            alert('请您先登录')
+            next({
+                path: '/login' //登录路由
+            })
+          }
   } else {
       next()
   }

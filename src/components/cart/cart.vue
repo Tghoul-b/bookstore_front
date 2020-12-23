@@ -23,7 +23,6 @@
                                 <DropdownItem @click.native="openUserInfo">个人信息</DropdownItem>
                                 <DropdownItem @click.native="toMain">商城主页</DropdownItem>
                                 <DropdownItem @click.native="BuyRecord">购物记录</DropdownItem>
-                                <DropdownItem @click.native="toadmin" >购物记录</DropdownItem>
                                 <DropdownItem @click.native="toadmin" v-if="this.username=='admin'">管理员页面</DropdownItem>
                                 <DropdownItem @click.native="logout">登出</DropdownItem>
                             </DropdownMenu>
@@ -96,7 +95,7 @@
             {{item.name}}
         </div>
         <p>您本次共需支付人民币{{this.total_price}}元</p>
-         <Progress  :percent="percentage" :stroke-color="['#108ee9', '#87d068']" style="width；100px"/>
+         <Progress  :percent="percentage" :stroke-color="['#108ee9', '#87d068']" style="width；100px" v-if="buying"/>
     <div slot="footer" style="margin-left:60%px">
         <Button type="success" size="large" :disabled="disable_btn" @click="buy_download">购买</Button>
     </div>
@@ -146,6 +145,7 @@
             },
         data(){
             return{
+                buying:false,
                 boughtrecords:[],
                 boughtModal:false,
                 disable_btn:false,
@@ -239,6 +239,7 @@
                 },
                 buy_download(){
                     this.percentage=0
+                    this.buying=true
                     this.disable_btn=true
                   for(let i=0;i<this.select_arr.length;i++){
                     let d=this.select_arr[i].name
@@ -247,6 +248,8 @@
                     this.$api.api_all.InsertIntoRecord(this.username,d,this.select_arr[i].price)
                     }
                     this.del_goods()
+                    this.total_price=0
+                    
                 },
             buy_goods(){
                 if(this.select_arr.length==0){
@@ -302,11 +305,13 @@
                     tmp_name.push(this.select_arr[i].name)
                     for(let j=0;j<this.dataArr.length;j++){
                         if(this.select_arr[i].name==this.dataArr[j].name){
+                            this.total_price-=this.select_arr[i].price
                             this.dataArr.splice(j,1);
                             break;
                         }
                     }
                 }
+                this.select_arr=[]
                 this.$api.api_all.delFromCart(
                     this.username,tmp_name
                 ).then((response)=>{

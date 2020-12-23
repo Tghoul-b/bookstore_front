@@ -2,7 +2,7 @@ import axios from '@/utils/axios'
 const api_all = {
     post_user_login_api(username,password) {
         return axios({
-            url: '/Login',
+            url: '/login',
             method: 'POST',
             data: {
                 username: username,
@@ -166,6 +166,13 @@ const api_all = {
     getAllClassNum(){
         return axios({
             url:'./getAllUsersInfo',
+            method:'POST',
+            data:{}
+        })
+    },
+    getAllBooksFirst(){
+        return axios({
+            url:'./getAllBooksFirst',
             method:'POST',
             data:{}
         })

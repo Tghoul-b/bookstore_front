@@ -154,10 +154,11 @@
                         })
                      }
                 this.total_data=d
+                this.tmp=this.total_data
                 this.total=this.total_data.length
                 var _start = ( this.pageIndex-1) * this.pagesize;  //pageIndex 第几页  pageNum:每页几条数据
                 var _end = _start+this.pagesize
-                this.dataArr = this.total_data.slice(_start,_end);
+                this.dataArr = this.tmp.slice(_start,_end);
                 })
                
             },
@@ -177,6 +178,7 @@
                 active_name:'全部',
                 imgsrc:'',
                 percentage:0,
+                tmp:[],
                 formItem:{
                     username:'',
                     sex:'',
@@ -218,19 +220,21 @@
                  this.pageIndex = value;
                  var _start = (value-1) * this.pagesize;
                  var _end = _start+this.pagesize
-                 this.dataArr = this.total_data.slice(_start,_end);
+                 this.dataArr = this.tmp.slice(_start,_end);
             },
             changePageSize(value){
                 this.pagesize=value
                 var _start=(this.pageIndex-1)*value;
                 var _end=_start+value;
-                this.dataArr=this.total_data.slice(_start,_end)
+                this.dataArr=this.tmp.slice(_start,_end)
             },
             changeActive(value){
                 this.active_name=value
                 var tmp=[]
                 if(value=='全部'){
                    this.dataArr=this.total_data.slice(0,this.pagesize);
+                   this.total=this.total_data.length
+                   this.tmp=this.total_data
                 }
                 else{
                 for(let i=0;i<this.total_data.length;i++)
@@ -239,7 +243,9 @@
                          tmp.push(this.total_data[i])
                      }
                  }
-                 this.dataArr=tmp
+                 this.tmp=tmp
+                 this.total=tmp.length
+                 this.dataArr=tmp.slice(0,this.pagesize)
                 }
             },
             openUserInfo(){

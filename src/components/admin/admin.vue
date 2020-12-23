@@ -31,7 +31,7 @@
         <div class="layout-content-main" style="height:700px">
           <template id="AddBook"></template>
           <template id="DelBook"></template>
-          <template id="statistics"></template>
+          <template id="statistics" style="width:1500px"></template>
           <component :is="currentView"></component>
         </div>
       </div>

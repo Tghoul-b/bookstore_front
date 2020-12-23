@@ -26,11 +26,13 @@
         <FormItem label="上传封面图" prop="fileimage">
          <input v-if="reloadImage" type="file" placeholder="上传封面图" @change="handleUploadImage" accept="image/*"></input>
         </FormItem >
-        <FormItem label="上传书籍" props="filepdf">
+        <FormItem label="上传书籍" prop="filepdf">
            <input v-if="reloadpdf" type="file" placeholder="上传书籍" @change="handleUploadPDF" ></input>
         </FormItem>
         <FormItem>
-            <Button type="primary" @click="handleSubmit('formItem')">添加</Button>
+            <Button type="primary" :loading="loading" @click="handleSubmit('formItem')">
+              <span v-if="!loading">添加</span>
+              <span v-else>上传中</span></Button>
             <Button @click="handleReset('formItem')" style="margin-left: 8px">重置</Button>
         </FormItem>
         
@@ -82,6 +84,7 @@
             return {
               reloadImage:true,
               reloadpdf:true,
+              loading:false,
                 formItem: {
                     name:'',
                     author:'',
@@ -89,7 +92,8 @@
                     classfication:'',
                     description:'',
                     fileImage:null,
-                    filepdf:null
+                    filepdf:null,
+                    
                 },
                 ruleValidate: {
                     name: [
@@ -122,6 +126,7 @@
             handleSubmit (name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
+                          this.loading=true
                           var formData = new FormData();
                           formData.append('bookname',this.formItem.name)
                           formData.append("author",this.formItem.author)
@@ -131,12 +136,28 @@
                           formData.append("ImgFile",this.formItem.fileImage)
                           formData.append("PdfFile",this.formItem.filepdf)
                           const xhr = new XMLHttpRequest()
-                          
                           xhr.open('POST','http://106.52.12.54:9999/UploadFile',true)
+                          
                           xhr.send(formData)
-                    } else {
-                        this.$Message.error('输入内容有误!');
-                    }
+                           xhr.onreadystatechange = () => { 
+                          if(xhr.readyState == 4 && xhr.status == 200){
+                            this.loading=false
+                             this.$Notice.success({
+                              title:"上传成功",
+                              desc:"添加图书成功",
+                              duration:0
+                            })
+                            }else if(xhr.readyState == 4&&xhr.status != 200){
+                              this.loading=false
+                            this.$Notice.error({
+                                            title:"上传失败",
+                                            desc:"上传文件失败,可能是您上传的文件太大(超出100M)",
+                                            duration:0
+                                    
+                                          })
+                            }
+                            }
+                }
                 })
             },
             handleReset (name) {
