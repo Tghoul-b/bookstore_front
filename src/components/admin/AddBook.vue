@@ -136,7 +136,7 @@
                           formData.append("ImgFile",this.formItem.fileImage)
                           formData.append("PdfFile",this.formItem.filepdf)
                           const xhr = new XMLHttpRequest()
-                          xhr.open('POST','http://106.52.12.54:9999/UploadFile',true)
+                          xhr.open('POST','http://127.0.0.1:8080/UploadFile',true)
                           
                           xhr.send(formData)
                            xhr.onreadystatechange = () => { 
